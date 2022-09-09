@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
   public User saveUser(User user, Set<UserRol> userRoles) throws Exception {
     var localUser = userRepo.findByUsername(user.getUsername());
     if (localUser != null) {
-      throw new Exception("User already exits");
+      return null;
     }else {
       for(UserRol userRole: userRoles){
         rolRepo.save(userRole.getRol());
