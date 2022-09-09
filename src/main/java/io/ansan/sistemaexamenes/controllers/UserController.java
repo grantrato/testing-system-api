@@ -6,6 +6,7 @@ import io.ansan.sistemaexamenes.entity.UserRol;
 import io.ansan.sistemaexamenes.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
@@ -18,8 +19,13 @@ public class UserController {
   @Autowired
   private UserService userService;
 
+  @Autowired
+  private BCryptPasswordEncoder bCryptPasswordEncoder;
+
   @PostMapping("/")
   public ResponseEntity<?> createUser(@RequestBody User user) throws Exception {
+    user.setProfile("default.png");
+    user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
     Set<UserRol> userRoles = new HashSet<>();
     Rol rol = new Rol();
     rol.setRolId(2L);
@@ -31,7 +37,12 @@ public class UserController {
 
     userRoles.add(userRol);
 
-    return ResponseEntity.ok(userService.saveUser(user, userRoles));
+    var localUser = userService.saveUser(user, userRoles);
+    if(localUser == null){
+      return ResponseEntity.badRequest().build();
+    }
+
+    return ResponseEntity.ok(localUser);
 
   }
 

@@ -2,14 +2,17 @@ package io.ansan.sistemaexamenes.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -41,10 +44,6 @@ public class User {
 
   public String getUsername() {
     return username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
   }
 
   public String getPassword() {
@@ -109,5 +108,33 @@ public class User {
 
   public void setUserRoles(Set<UserRol> userRoles) {
     this.userRoles = userRoles;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    Set<Authority> authorities = new HashSet<>();
+    this.userRoles.forEach(ur -> {
+      authorities.add(new Authority(ur.getRol().getName()));
+    });
+    return authorities;
   }
 }
