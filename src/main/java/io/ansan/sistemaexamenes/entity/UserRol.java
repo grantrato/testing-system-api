@@ -1,6 +1,7 @@
 package io.ansan.sistemaexamenes.entity;
 
-import javax.persistence.*;
+
+import jakarta.persistence.*;
 
 @Entity
 public class UserRol {

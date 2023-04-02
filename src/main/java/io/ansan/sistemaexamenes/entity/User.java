@@ -2,10 +2,10 @@ package io.ansan.sistemaexamenes.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +14,8 @@ import java.util.Set;
 @Table(name = "users")
 public class User implements UserDetails {
 
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String username;

@@ -1,13 +1,10 @@
 package io.ansan.sistemaexamenes.config;
 
-import io.ansan.sistemaexamenes.services.impl.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,17 +14,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
 public class MySecurityConfig {
 
-  @Autowired
-  private JwtAuthenticationEntryPoint unauthorizedHandler;
+  private final JwtAuthenticationEntryPoint unauthorizedHandler;
 
-  @Autowired
-  UserDetailsServiceImpl userDetailsService;
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-  @Autowired
-  JwtAuthenticationFilter jwtAuthenticationFilter;
 
   @Bean
   public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -39,17 +32,19 @@ public class MySecurityConfig {
     http.csrf().disable()
         .cors()
         .disable()
-        .authorizeRequests()
-        .antMatchers("/generate-token","/users/").permitAll()
-        .antMatchers(HttpMethod.OPTIONS).permitAll()
-        .anyRequest().permitAll()
+        .authorizeHttpRequests()
+        .requestMatchers("/generate-token","/users/")
+        .permitAll()
+        .anyRequest()
+        .authenticated()
         .and()
         .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
         .and()
         .httpBasic()
         .and()
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 

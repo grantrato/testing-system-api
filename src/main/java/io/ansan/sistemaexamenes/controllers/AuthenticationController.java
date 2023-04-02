@@ -5,7 +5,7 @@ import io.ansan.sistemaexamenes.entity.JwtRequest;
 import io.ansan.sistemaexamenes.entity.JwtResponse;
 import io.ansan.sistemaexamenes.services.UserService;
 import io.ansan.sistemaexamenes.services.impl.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,24 +13,19 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @CrossOrigin("*")
 public class AuthenticationController {
-  @Autowired
+
   private AuthenticationManager authenticationManager;
 
-  @Autowired
   private UserDetailsServiceImpl userDetailsService;
 
-  @Autowired
   private JwtUtils jwtUtils;
 
-  @Autowired
   private UserService userService;
 
-  @Autowired
   private BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @RequestMapping(value = "/generate-token", method = RequestMethod.POST)
